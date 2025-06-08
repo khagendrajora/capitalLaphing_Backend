@@ -51,8 +51,8 @@ export const createOrder = async (req, res) => {
 
     const user = await User.findOne({ phone });
     if (user) {
-      const checkEmail = await User.findOne({ email: user.email });
-      if (checkEmail != email) {
+      // const checkEmail = await User.findOne({ email: user.email });
+      if (user.email != email) {
         return res
           .status(400)
           .json({ message: "Email and phone Miss-Matched" });
@@ -60,7 +60,7 @@ export const createOrder = async (req, res) => {
     }
     if (!user) {
       const checkEmail = await User.findOne({ email });
-      if (checkEmail != email) {
+      if (checkEmail) {
         return res
           .status(400)
           .json({ message: "Email registered with different phone number" });
