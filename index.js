@@ -26,13 +26,12 @@ const server = http.createServer(app);
 
 const port = process.env.PORT || 5000;
 app.use(morgan("dev"));
-app.use(
-  cors({
-    // origin: ["http://localhost:5173"],
-    origin: ["http://localhost:5000", "http://192.168.1.153:5000"],
-    credentials: true,
-  })
-);
+app.use(cors());
+// origin: ["http://localhost:5173"],
+//   origin: ["http://localhost:5000", "http://192.168.1.153:5000"],
+//   credentials: true,
+// })
+// );
 
 // 🚀 Ensure raw body for webhooks
 // app.post(
