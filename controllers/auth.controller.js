@@ -60,7 +60,7 @@ export const loginUser = async (req, res) => {
       // secure: process.env.NODE_ENV === "production", // Set to true if using https
       secure: true,
       maxAge: 3600000, // 1 hour (in milliseconds)
-      sameSite: "Strict", // Helps prevent CSRF attacks
+      sameSite: "None", // Helps prevent CSRF attacks
     });
 
     res.status(200).json({

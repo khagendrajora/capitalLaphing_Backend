@@ -29,11 +29,7 @@ app.use(morgan("dev"));
 app.use(
   cors({
     // origin: ["https://capitallaphing-backend.onrender.com"],
-    origin: [
-      "https://capitallaphing.netlify.app",
-      "https://capitallaphing-backend.onrender.com",
-      "http://localhost:5000",
-    ],
+    origin: ["https://capitallaphing.netlify.app", "http://localhost:5000"],
     credentials: true,
   })
 );
