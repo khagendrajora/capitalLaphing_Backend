@@ -7,8 +7,9 @@
   "scripts": {
     "start": "node index",
     "server": "nodemon index",
-    "client": "npm run start --prefix client",
-    "dev": "concurrently \"npm run server\" \"cd client && npm run dev\""
+  
+    "dev": "concurrently \"npm run server\" \"cd client && npm run dev\"",
+   "build": "npm ci && echo 'Backend dependencies installed for production'"
   },
   "author": "",
   "license": "ISC",
