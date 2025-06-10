@@ -15,6 +15,7 @@ const OTP_EXPIRY_DURATION = 60 * 1000; // 2 minutes
 const OTP_REQUEST_LIMIT = 10 * 1000; // 10 seconds
 
 export const sendOrRegenerateOTP = async (req, res) => {
+  console.log(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
   try {
     const { phone } = req.body;
     console.log(phone);
