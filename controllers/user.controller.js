@@ -10,7 +10,7 @@ const twilioClient = twilio(
 );
 
 // OTP Expiration Times
-const FIRST_OTP_EXPIRY = 60 * 2000; // 2 minute
+const FIRST_OTP_EXPIRY = 60 * 1000; // 2 minute
 const OTP_EXPIRY_DURATION = 60 * 1000; // 2 minutes
 const OTP_REQUEST_LIMIT = 10 * 1000; // 10 seconds
 
@@ -55,23 +55,15 @@ export const sendOrRegenerateOTP = async (req, res) => {
     user.otpExpiresAt = currentTime + expiryTime;
     user.otpRequestedAt = currentTime;
 
-    await user.save();
-
     // Send OTP via Twilio
-    const message = await twilioClient.messages.create({
+    await twilioClient.messages.create({
       body: `Your OTP is ${newOtp}. It expires in ${
         expiryTime / 60000
       } minutes.`,
       from: process.env.TWILIO_PHONE,
       to: phone,
     });
-    if (!message) {
-      return res.json({
-        success: false,
-        message: "Failed to send mesage",
-        user,
-      });
-    }
+
     await user.save();
     return res.json({ success: true, message: "OTP Sent Successfully", user });
   } catch (error) {
