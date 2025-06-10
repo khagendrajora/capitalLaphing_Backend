@@ -13,8 +13,8 @@ import categoryRoutes from "./routes/category.route.js";
 import productRoutes from "./routes/product.route.js";
 import orderRoutes from "./routes/order.route.js";
 import branchRoutes from "./routes/branch.route.js";
-import Stripe from "stripe";
-import { Order } from "./models/order.model.js";
+// import Stripe from "stripe";
+// import { Order } from "./models/order.model.js";
 
 dotenv.config();
 // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -26,14 +26,14 @@ const server = http.createServer(app);
 
 const port = process.env.PORT || 5000;
 app.use(morgan("dev"));
-// app.use(
-//   cors({
-// origin: ["http://localhost:5173"],
-//     origin: ["http://localhost:5000", "http://192.168.1.153:5000"],
-//     credentials: true,
-//   })
-// );
-app.use(cors());
+app.use(
+  cors({
+    // origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5000", "http://192.168.1.153:5000"],
+    credentials: true,
+  })
+);
+
 // 🚀 Ensure raw body for webhooks
 // app.post(
 //   "/api/webhook",

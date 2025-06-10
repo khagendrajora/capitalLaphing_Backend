@@ -3,17 +3,17 @@ import { User } from "../models/user.model.js";
 import { Branch } from "../models/branch.model.js";
 import { Client, Environment } from "square/legacy";
 
-// import twilio from "twilio";
+import twilio from "twilio";
 // import Stripe from "stripe";
 
 import dotenv from "dotenv";
 dotenv.config();
 
 // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-// const twilioClient = twilio(
-//   process.env.TWILIO_SID,
-//   process.env.TWILIO_AUTH_TOKEN
-// );
+const twilioClient = twilio(
+  process.env.TWILIO_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 const client = new Client({
   environment: Environment.Sandbox,
@@ -43,6 +43,9 @@ export const createOrder = async (req, res) => {
 
     const products = req.body.products;
 
+    console.log(products);
+
+    let pickUpLocation = products[0].pickUpLocation || products[0].branchName;
     if (!Array.isArray(products) || products.length === 0) {
       return res
         .status(400)
@@ -50,21 +53,21 @@ export const createOrder = async (req, res) => {
     }
 
     const user = await User.findOne({ phone });
-    if (user) {
-      // const checkEmail = await User.findOne({ email: user.email });
-      if (user.email != email) {
-        return res
-          .status(400)
-          .json({ message: "Email and phone Miss-Matched" });
-      }
-    }
+    // if (user) {
+    //   const checkEmail = await User.findOne({ email: user.email });
+    //   if (checkEmail) {
+    //     return res
+    //       .status(400)
+    //       .json({ message: "Email and phone Miss-Matched" });
+    //   }
+    // }
     if (!user) {
-      const checkEmail = await User.findOne({ email });
-      if (checkEmail) {
-        return res
-          .status(400)
-          .json({ message: "Email registered with different phone number" });
-      }
+      // const checkEmail = await User.findOne({ email });
+      // if (checkEmail) {
+      //   return res
+      //     .status(400)
+      //     .json({ message: "Email registered with different phone number" });
+      // }
       let newUser = await new User({
         name,
         phone,
@@ -84,9 +87,10 @@ export const createOrder = async (req, res) => {
 
     const branchIds = [...new Set(products.map((p) => p.branchId))];
     const branches = await Branch.find({ _id: { $in: branchIds } });
+    console.log(products);
 
     const lineItems = products.map((product, index) => {
-      const title = product.title || `Item ${index + 1}`;
+      const title = product.product.title;
       const price = product.product?.assignedPrice;
 
       if (!price) {
@@ -118,8 +122,23 @@ export const createOrder = async (req, res) => {
       idempotencyKey: `order-${Date.now()}`,
       order: {
         locationId: process.env.SQUARE_LOCATION_ID,
+        fulfillments: [
+          {
+            type: "PICKUP",
+            pickupDetails: {
+              recipient: {
+                displayName: name,
+                emailAddress: email,
+                phoneNumber: phone,
+              },
+              pickupAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+            },
+          },
+        ],
         lineItems: lineItems,
-        discounts,
+        source: {
+          name: pickUpLocation,
+        },
       },
     });
 
@@ -141,16 +160,17 @@ export const createOrder = async (req, res) => {
       const newOrder = await new Order({
         products: products,
         paymentIntent: paymentResult.payment.id,
-        deliveryDetails: {
-          name: name,
-          email: email,
-          phone: phone,
-        },
+        // deliveryDetails: {
+        //   name: name,
+        //   email: email,
+        //   phone: phone,
+        // },
         isPaid: isPaid,
         totalPayable: totalPayable,
         discount: discount,
         orderdBy: userId,
         deliveryCharge: deliveryCharge,
+        pickUpLocation: pickUpLocation,
       }).save();
 
       // const user = await User.findById(userId);

@@ -5,7 +5,7 @@ export const createBranch = async (req, res) => {
   try {
     const {
       title,
-      deliveryAreas,
+      // deliveryAreas,
       openingHours,
       houseNumber,
       street,
@@ -20,7 +20,7 @@ export const createBranch = async (req, res) => {
       suburb,
       postalCode,
       state,
-      deliveryAreas,
+      // deliveryAreas,
       openingHours,
     });
     await branch.save();
@@ -63,27 +63,32 @@ export const getBranches = async (req, res) => {
 // Assign products to a branch with different prices
 export const assignProductsToBranch = async (req, res) => {
   try {
-    const { branchId, products } = req.body; // Expecting an array of { productId, price }
-
+    const { branchId, products } = req.body;
     const branch = await Branch.findById(branchId);
     if (!branch)
       return res
         .status(404)
         .json({ success: false, message: "Branch not found" });
 
-    branch.assignedProducts = products.map(({ productId, price }) => ({
-      product: productId,
-      price,
-      assignedDate: new Date(),
-    }));
+    branch.assignedProducts.push(
+      ...products.map(({ productId, price }) => ({
+        product: productId,
+        price,
+      }))
+    );
 
-    await branch.save();
-
-    res.status(200).json({
-      success: true,
-      branch,
-      message: "Products assigned successfully.",
-    });
+    const savedBranch = await branch.save();
+    if (!savedBranch) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Failed to save" });
+    } else {
+      return res.status(200).json({
+        success: true,
+        branch,
+        message: "Products assigned successfully.",
+      });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -96,7 +101,7 @@ export const updateBranch = async (req, res) => {
     const {
       id,
       title,
-      deliveryAreas,
+      // deliveryAreas,
       openingHours,
       houseNumber,
       street,
@@ -108,7 +113,7 @@ export const updateBranch = async (req, res) => {
       id,
       {
         title,
-        deliveryAreas,
+        // deliveryAreas,
         openingHours,
         houseNumber,
         street,

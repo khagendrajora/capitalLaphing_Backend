@@ -10,9 +10,9 @@ const twilioClient = twilio(
 );
 
 // OTP Expiration Times
-const FIRST_OTP_EXPIRY = 60 * 1000; // 1 minute
-const OTP_EXPIRY_DURATION = 60 * 1000; // 1 minutes
-const OTP_REQUEST_LIMIT = 5 * 1000; // 5 seconds
+const FIRST_OTP_EXPIRY = 60 * 2000; // 2 minute
+const OTP_EXPIRY_DURATION = 60 * 1000; // 2 minutes
+const OTP_REQUEST_LIMIT = 10 * 1000; // 10 seconds
 
 export const sendOrRegenerateOTP = async (req, res) => {
   try {
@@ -58,15 +58,22 @@ export const sendOrRegenerateOTP = async (req, res) => {
     await user.save();
 
     // Send OTP via Twilio
-    await twilioClient.messages.create({
+    const message = await twilioClient.messages.create({
       body: `Your OTP is ${newOtp}. It expires in ${
         expiryTime / 60000
       } minutes.`,
       from: process.env.TWILIO_PHONE,
       to: phone,
     });
-
-    res.json({ success: true, message: "OTP Sent Successfully", user });
+    if (!message) {
+      return res.json({
+        success: false,
+        message: "Failed to send mesage",
+        user,
+      });
+    }
+    await user.save();
+    return res.json({ success: true, message: "OTP Sent Successfully", user });
   } catch (error) {
     console.error("Error sending OTP:", error);
     res.status(500).json({ message: "Internal Server Error" });

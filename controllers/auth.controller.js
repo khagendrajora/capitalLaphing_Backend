@@ -29,8 +29,8 @@ export const registerUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
     const user = await Admin.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
@@ -153,13 +153,19 @@ export const paymentStatus = async (req, res) => {
 
 export const updateOrder = async (req, res) => {
   try {
-    const { orderId, orderStatus, isPaid, deliveryTime } = req.body;
+    const { orderId, orderStatus, isPaid } = req.body;
 
     let updated = await Order.findByIdAndUpdate(orderId, {
       orderStatus,
-      isPaid,
-      deliveryTime,
+      // isPaid,
+      // deliveryTime,
     });
+    if (!updated) {
+      return res.status(200).json({
+        success: true,
+        message: "Failed to Updated !",
+      });
+    }
     return res.status(200).json({
       success: true,
       message: "Order updated !",

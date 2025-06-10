@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/branch", authenticate, checkAdmin, createBranch);
 router.get("/branches", getBranches);
-router.post(
+router.put(
   "/branch/assign-product",
   authenticate,
   checkAdmin,

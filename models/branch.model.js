@@ -26,12 +26,12 @@ const branchSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    deliveryAreas: [
-      {
-        postcode: { type: String, required: true },
-        areaName: { type: String, required: true },
-      },
-    ],
+    // deliveryAreas: [
+    //   {
+    //     postcode: { type: String, required: true },
+    //     areaName: { type: String, required: true },
+    //   },
+    // ],
     openingHours: [
       {
         day: { type: String, required: true },
@@ -116,17 +116,17 @@ branchSchema.methods.updateOpeningHours = async function (updatedHours) {
 };
 
 // Method to add delivery area
-branchSchema.methods.addDeliveryArea = async function (postcode, areaName) {
-  this.deliveryAreas.push({ postcode, areaName });
-  await this.save();
-};
+// branchSchema.methods.addDeliveryArea = async function (postcode, areaName) {
+//   this.deliveryAreas.push({ postcode, areaName });
+//   await this.save();
+// };
 
 // Method to remove delivery area
-branchSchema.methods.removeDeliveryArea = async function (postcode) {
-  this.deliveryAreas = this.deliveryAreas.filter(
-    (area) => area.postcode !== postcode
-  );
-  await this.save();
-};
+// branchSchema.methods.removeDeliveryArea = async function (postcode) {
+//   this.deliveryAreas = this.deliveryAreas.filter(
+//     (area) => area.postcode !== postcode
+//   );
+//   await this.save();
+// };
 
 export const Branch = mongoose.model("Branch", branchSchema);
