@@ -7,6 +7,7 @@ import {
   getBranches,
   getDailyStats,
   updateBranch,
+  updateProductsToBranch,
 } from "../controllers/branch.controller.js";
 const router = express.Router();
 
@@ -17,6 +18,13 @@ router.put(
   authenticate,
   checkAdmin,
   assignProductsToBranch
+);
+
+router.put(
+  "/branch/update-product",
+  authenticate,
+  checkAdmin,
+  updateProductsToBranch
 );
 router.get(
   "/branch/:branchId/daily-stats",

@@ -44,6 +44,7 @@ const branchSchema = new mongoose.Schema(
         product: { type: ObjectId, ref: "Product", required: true },
         price: { type: Number, required: true },
         assignedDate: { type: Date, default: Date.now },
+        isActive: { type: Boolean, required: true, default: true },
       },
     ],
 

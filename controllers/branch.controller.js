@@ -95,6 +95,52 @@ export const assignProductsToBranch = async (req, res) => {
   }
 };
 
+export const updateProductsToBranch = async (req, res) => {
+  try {
+    const { branchId, products } = req.body;
+    // console.log(branchId);
+    // console.log(products);
+    if (!branchId || !Array.isArray(products)) {
+      return res.status(400).json({ message: "Invalid payload." });
+    }
+    const branch = await Branch.findById(branchId);
+    // console.log(branch);
+    if (!branch)
+      return res
+        .status(404)
+        .json({ success: false, message: "Branch not found" });
+
+    let updatedCount = 0;
+
+    products.forEach(({ productId, isActive, price }) => {
+      const assignment = branch.assignedProducts.find(
+        (ap) => ap.product.toString() === productId
+      );
+      if (assignment) {
+        assignment.isActive = isActive;
+        assignment.price = price;
+        updatedCount++;
+      }
+    });
+
+    const savedBranch = await branch.save();
+    if (!savedBranch) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Failed to save" });
+    } else {
+      return res.status(200).json({
+        success: true,
+        branch,
+        message: "Products Updated successfully.",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // Update branch details
 export const updateBranch = async (req, res) => {
   try {
