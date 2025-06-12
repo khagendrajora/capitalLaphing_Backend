@@ -18,7 +18,7 @@ export const sendOrRegenerateOTP = async (req, res) => {
   console.log(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
   try {
     const { phone } = req.body;
-    console.log(phone);
+
     let user = await User.findOne({ phone });
 
     const currentTime = Date.now();
