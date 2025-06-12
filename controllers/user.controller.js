@@ -109,10 +109,14 @@ export const verifyOTP = async (req, res) => {
     );
 
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true, // Ensures the cookie is not accessible via JavaScript
+      secure: true, // Set to true if using https
+      maxAge: 3600000, // 1 hour (in milliseconds)
+      sameSite: "None", // Helps prevent CSRF attacks
+      // httpOnly: true,
+      // secure: process.env.NODE_ENV === "production",
+      // sameSite: "Strict",
+      // maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({ success: true, message: "OTP Verified Successfully", user });
