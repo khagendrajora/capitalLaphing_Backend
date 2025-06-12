@@ -2,7 +2,8 @@ import { Product } from "../models/product.model.js";
 // Create a new product
 export const createProduct = async (req, res) => {
   try {
-    const { category, title, price, discount, description } = req.body;
+    const { category, title, price, discount, description, isPopular } =
+      req.body;
 
     // Create a new product object
     const newProduct = new Product({
@@ -10,6 +11,7 @@ export const createProduct = async (req, res) => {
       title,
       price,
       discount,
+      isPopular,
       description,
     });
     // Handle image upload if present
@@ -72,9 +74,26 @@ export const getProductById = async (req, res) => {
 
 // Update a product
 export const updateProduct = async (req, res) => {
-  const { category, title, price, discount, description, id } = req.body;
+  const {
+    category,
+    title,
+    price,
+    discount,
+    description,
+    id,
+    isActive,
+    isPopular,
+  } = req.body;
   try {
-    const updateFields = { category, title, price, discount, description };
+    const updateFields = {
+      category,
+      title,
+      price,
+      discount,
+      description,
+      isActive,
+      isPopular,
+    };
 
     const food = await Product.findByIdAndUpdate(id, updateFields, {
       new: true,

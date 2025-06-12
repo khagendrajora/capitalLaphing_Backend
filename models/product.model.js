@@ -7,6 +7,13 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
+
+    isPopular: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+
     title: {
       type: String,
       required: true,

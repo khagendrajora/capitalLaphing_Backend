@@ -122,6 +122,33 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
+export const updateUser = async (req, res) => {
+  try {
+    const { id, name, email, phone } = req.body;
+    console.log(id, name, email, phone);
+
+    let updated = await User.findByIdAndUpdate(id, {
+      name,
+      email,
+      phone,
+    });
+    console.log(updated);
+    if (!updated) {
+      return res.status(200).json({
+        success: true,
+        message: "Failed to Updated !",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Info updated !",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find({}).sort({ createdAt: -1 }).exec();

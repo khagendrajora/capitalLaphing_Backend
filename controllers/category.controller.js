@@ -47,10 +47,11 @@ const getCategory = async (req, res) => {
 };
 
 const updateCategory = async (req, res) => {
-  const { title, id } = req.body;
+  const { title, id, isActive } = req.body;
   try {
     const category = await Category.findByIdAndUpdate(id, {
       title,
+      isActive,
     });
     return res.status(200).json({
       success: true,

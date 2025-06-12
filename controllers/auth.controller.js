@@ -57,8 +57,7 @@ export const loginUser = async (req, res) => {
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true, // Ensures the cookie is not accessible via JavaScript
-      // secure: process.env.NODE_ENV === "production", // Set to true if using https
-      secure: true,
+      secure: true, // Set to true if using https
       maxAge: 3600000, // 1 hour (in milliseconds)
       sameSite: "None", // Helps prevent CSRF attacks
     });
@@ -181,7 +180,7 @@ export const getOrdersByUser = async (req, res) => {
   try {
     const { userId } = req.params;
     console.log(userId);
-    const orders = await Order.find({ orderdBy: userId })
+    const orders = await Order.find({ phone: userId })
       .sort("-createdAt")
       .exec();
     if (!orders || orders.length === 0) {

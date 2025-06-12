@@ -34,7 +34,6 @@ export const createOrder = async (req, res) => {
       name,
       email,
       phone,
-      isPaid,
       discount,
       totalPayable,
       userId,
@@ -165,10 +164,13 @@ export const createOrder = async (req, res) => {
         //   email: email,
         //   phone: phone,
         // },
-        isPaid: isPaid,
+
         totalPayable: totalPayable,
         discount: discount,
         orderdBy: userId,
+        name,
+        email,
+        phone,
         deliveryCharge: deliveryCharge,
         pickUpLocation: pickUpLocation,
       }).save();

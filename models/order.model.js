@@ -15,6 +15,20 @@ const orderSchema = new mongoose.Schema(
       default: "Processing",
       enum: ["Processing", "Cancelled", "Completed"],
     },
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+
+    phone: {
+      type: String,
+      // ref: "User",
+      required: true,
+    },
     // deliveryDetails: {
     //   name: String,
     //   email: String,
@@ -25,7 +39,7 @@ const orderSchema = new mongoose.Schema(
     // stateOrTerritoryOrCounty: String,
     // postalOrZipCode: String,
     // },
-    isPaid: { type: Boolean, default: false },
+    isPaid: { type: Boolean, default: true },
     discount: Number,
     totalPayable: Number,
     deliveryCharge: Number,

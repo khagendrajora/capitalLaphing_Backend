@@ -14,27 +14,27 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    address: {
-      type: String,
-      default: "",
-    },
-    addressLine1: {
-      type: String,
-      default: "",
-    },
-    cityOrTownName: {
-      type: String,
-      default: "",
-    },
-    stateOrTerritoryOrCounty: {
-      type: String,
-      default: "",
-    },
+    // address: {
+    //   type: String,
+    //   default: "",
+    // },
+    // addressLine1: {
+    //   type: String,
+    //   default: "",
+    // },
+    // cityOrTownName: {
+    //   type: String,
+    //   default: "",
+    // },
+    // stateOrTerritoryOrCounty: {
+    //   type: String,
+    //   default: "",
+    // },
 
-    postalOrZipCode: {
-      type: String,
-      default: "",
-    },
+    // postalOrZipCode: {
+    //   type: String,
+    //   default: "",
+    // },
 
     isVerified: { type: Boolean, default: false },
   },
