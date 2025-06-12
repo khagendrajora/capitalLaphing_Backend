@@ -57,13 +57,18 @@ export const sendOrRegenerateOTP = async (req, res) => {
     user.otpRequestedAt = currentTime;
 
     // Send OTP via Twilio
-    await twilioClient.messages.create({
-      body: `Your OTP is ${newOtp}. It expires in ${
-        expiryTime / 60000
-      } minutes.`,
-      from: process.env.TWILIO_PHONE,
-      to: phone,
-    });
+    try {
+      await twilioClient.messages.create({
+        body: `Your OTP is ${newOtp}. It expires in ${
+          expiryTime / 60000
+        } minutes.`,
+        from: process.env.TWILIO_PHONE,
+        to: phone,
+      });
+    } catch (twilloError) {
+      console.error("Twilio Error:", twilloError);
+      return res.status(500).json({ message: "Twillo Error" });
+    }
 
     await user.save();
     return res.json({ success: true, message: "OTP Sent Successfully", user });
