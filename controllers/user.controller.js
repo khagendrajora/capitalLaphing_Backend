@@ -10,17 +10,15 @@ const twilioClient = twilio(
 );
 
 // OTP Expiration Times
-const FIRST_OTP_EXPIRY = 60 * 1000; // 2 minute
-const OTP_EXPIRY_DURATION = 60 * 1000; // 2 minutes
+const FIRST_OTP_EXPIRY = 60 * 1000; // 1 minute
+const OTP_EXPIRY_DURATION = 60 * 1000; // 1 minutes
 const OTP_REQUEST_LIMIT = 10 * 1000; // 10 seconds
 
 export const sendOrRegenerateOTP = async (req, res) => {
-  console.log(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
   try {
     const { phone } = req.body;
 
     let user = await User.findOne({ phone });
-
     const currentTime = Date.now();
 
     // If user exists, check OTP status
@@ -57,18 +55,18 @@ export const sendOrRegenerateOTP = async (req, res) => {
     user.otpRequestedAt = currentTime;
 
     // Send OTP via Twilio
-    try {
-      await twilioClient.messages.create({
-        body: `Your OTP is ${newOtp}. It expires in ${
-          expiryTime / 60000
-        } minutes.`,
-        from: process.env.TWILIO_PHONE,
-        to: phone,
-      });
-    } catch (twilloError) {
-      console.error("Twilio Error:", twilloError);
-      return res.status(500).json({ message: "Twillo Error" });
-    }
+    // try {
+    await twilioClient.messages.create({
+      body: `Your OTP is ${newOtp}. It expires in ${
+        expiryTime / 60000
+      } minutes.`,
+      from: process.env.TWILIO_PHONE,
+      to: phone,
+    });
+    // } catch (twilioError) {
+    //   console.error("Twilio Error:", twilioError);
+    //   return res.status(500).json({ message: "Twilio Error" });
+    // }
 
     await user.save();
     return res.json({ success: true, message: "OTP Sent Successfully", user });
@@ -116,18 +114,31 @@ export const verifyOTP = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true, // Ensures the cookie is not accessible via JavaScript
       secure: true, // Set to true if using https
-      maxAge: 3600000, // 1 hour (in milliseconds)
       sameSite: "None", // Helps prevent CSRF attacks
-      // httpOnly: true,
-      // secure: process.env.NODE_ENV === "production",
-      // sameSite: "Strict",
-      // maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.json({ success: true, message: "OTP Verified Successfully", user });
+    return res.json({
+      success: true,
+      message: "OTP Verified Successfully",
+      user,
+    });
   } catch (error) {
     console.error("Error verifying OTP:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).sort({ createdAt: -1 }).exec();
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -155,19 +166,6 @@ export const updateUser = async (req, res) => {
       success: true,
       message: "Info updated !",
       user: updated,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-export const getUsers = async (req, res) => {
-  try {
-    const users = await User.find({}).sort({ createdAt: -1 }).exec();
-    res.status(200).json({
-      success: true,
-      users,
     });
   } catch (error) {
     console.error(error);

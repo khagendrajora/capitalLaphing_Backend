@@ -1,4 +1,5 @@
 import { Product } from "../models/product.model.js";
+import { Branch } from "../models/branch.model.js";
 // Create a new product
 export const createProduct = async (req, res) => {
   try {
@@ -95,6 +96,10 @@ export const updateProduct = async (req, res) => {
       isPopular,
     };
 
+    if (req.file) {
+      updateFields.image = req.file.path;
+    }
+
     const food = await Product.findByIdAndUpdate(id, updateFields, {
       new: true,
     });
@@ -117,20 +122,45 @@ export const updateProduct = async (req, res) => {
 
 // Delete a product
 export const deleteProduct = async (req, res) => {
+  const productId = req.params.id;
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findByIdAndDelete(productId);
     if (!product) {
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
     }
-    res.status(200).json({
+
+    const branches = await Branch.find({
+      "assignedProducts.product": productId,
+    });
+
+    // Step 3: Build a list of updates to remove specific assignedProducts by their _id
+    const updatePromises = branches.map((branch) => {
+      const assignedProductIdsToRemove = branch.assignedProducts
+        .filter((ap) => ap.product?.toString() === productId)
+        .map((ap) => ap._id);
+
+      return Branch.updateOne(
+        { _id: branch._id },
+        {
+          $pull: {
+            assignedProducts: {
+              _id: { $in: assignedProductIdsToRemove },
+            },
+          },
+        }
+      );
+    });
+
+    await Promise.all(updatePromises);
+    return res.status(200).json({
       success: true,
       message: "Food deleted successfully",
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 

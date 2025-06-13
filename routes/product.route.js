@@ -21,7 +21,13 @@ router.post(
 );
 router.get("/products", getAllProducts);
 router.get("/product/:id", getProductById);
-router.post("/updateproduct", authenticate, checkAdmin, updateProduct);
+router.post(
+  "/updateproduct",
+  authenticate,
+  checkAdmin,
+  upload.single("image"),
+  updateProduct
+);
 router.post("/deleteproduct/:id", authenticate, checkAdmin, deleteProduct);
 router.post("/filterproducts", getFilteredProducts);
 

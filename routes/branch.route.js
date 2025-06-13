@@ -19,7 +19,6 @@ router.put(
   checkAdmin,
   assignProductsToBranch
 );
-
 router.put(
   "/branch/update-product",
   authenticate,

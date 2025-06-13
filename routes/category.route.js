@@ -20,7 +20,13 @@ router.post(
 );
 router.get("/categories", getCategories);
 router.get("/category/:id", getCategory);
-router.post("/update-category", authenticate, checkAdmin, updateCategory);
+router.post(
+  "/update-category",
+  authenticate,
+  checkAdmin,
+  upload.single("thumb_nail"),
+  updateCategory
+);
 router.post("/delete-category/:id", authenticate, checkAdmin, deleteCategory);
 
 export default router;
