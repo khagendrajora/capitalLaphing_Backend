@@ -157,7 +157,7 @@ export const createOrder = async (req, res) => {
     const paymentResult = paymentResponse.result;
 
     let orderId = pickUpLocation.slice(0, 3) + nanoid(4);
-    orderId = pickUpLocation.slice(0, 3) + customId;
+
     if (paymentResult.payment.status === "COMPLETED") {
       const newOrder = await new Order({
         products: products,
