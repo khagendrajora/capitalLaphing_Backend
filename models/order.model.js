@@ -4,6 +4,9 @@ const { ObjectId } = mongoose.Schema;
 
 const orderSchema = new mongoose.Schema(
   {
+    orderId: {
+      type: String,
+    },
     products: [{ type: Object }],
     // branchName: {
     //   type: String,
