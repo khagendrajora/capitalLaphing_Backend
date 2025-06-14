@@ -2,7 +2,7 @@ import { Order } from "../models/order.model.js";
 import { User } from "../models/user.model.js";
 import { Branch } from "../models/branch.model.js";
 import { Client, Environment } from "square/legacy";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
 
 import twilio from "twilio";
 // import Stripe from "stripe";
@@ -156,7 +156,8 @@ export const createOrder = async (req, res) => {
     });
     const paymentResult = paymentResponse.result;
 
-    let orderId = pickUpLocation.slice(0, 3) + nanoid(4);
+    const numericNanoid = customAlphabet("1234567890", 3);
+    let orderId = pickUpLocation.slice(0, 3) + numericNanoid();
 
     if (paymentResult.payment.status === "COMPLETED") {
       const newOrder = await new Order({
