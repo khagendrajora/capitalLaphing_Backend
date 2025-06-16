@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import { Branch } from "../models/branch.model.js";
 import { Client, Environment } from "square/legacy";
 import { customAlphabet } from "nanoid";
+import { Notification } from "../models/notification.model.js";
 
 import twilio from "twilio";
 // import Stripe from "stripe";
@@ -161,8 +162,8 @@ export const createOrder = async (req, res) => {
 
     if (paymentResult.payment.status === "COMPLETED") {
       const newOrder = await new Order({
-        products: products,
-        orderId: orderId,
+        products,
+        orderId,
         paymentIntent: paymentResult.payment.id,
         // deliveryDetails: {
         //   name: name,
@@ -170,14 +171,24 @@ export const createOrder = async (req, res) => {
         //   phone: phone,
         // },
 
-        totalPayable: totalPayable,
-        discount: discount,
+        totalPayable,
+        discount,
         orderdBy: userId,
         name,
         email,
         phone,
-        deliveryCharge: deliveryCharge,
+        deliveryCharge,
         pickUpLocation: pickUpLocation,
+      }).save();
+
+      if (!newOrder) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Failed to Place order" });
+      }
+
+      await new Notification({
+        notificationId: newOrder._id,
       }).save();
 
       // const user = await User.findById(userId);
